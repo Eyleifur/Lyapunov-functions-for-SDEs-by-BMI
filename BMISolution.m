@@ -10,9 +10,8 @@ function mM = BMISolution(F, G, p0, eps, seed)
     
     syms p epsi
     
-    F1 = sym('F%d', [n,n]); %[n,n]
-    G1 = sym('G%d', [n,n,numGs]); %[n,n]
-    %subs(A(:,:,:,:), {F1, G1, p, epsi}, {F, G, p0, eps})
+    F1 = sym('F%d', [n,n]);
+    G1 = sym('G%d', [n,n,numGs]);
     A = subs(A, F1, F);                 % Symbolic to numeric
     A = subs(A, G1, G);
     A = subs(A, [p, epsi], [p0, eps]);
@@ -28,8 +27,8 @@ function mM = BMISolution(F, G, p0, eps, seed)
     Msize = BMISize(n);
     Bsize = size(B,3);
     m = n*(n+1) / 2;
-    q0 = rand(Bsize, 1); %rand(Bsize, 1) held ég              % random starting point
-    c = rand(Bsize, 1);  %rand(Bsize, 1)             % random linear objective function specified by c
+    q0 = rand(Bsize, 1);    % random starting point
+    c = rand(Bsize, 1);     % random linear objective function specified by c
     
     
     for i = 1 : maxIter 
@@ -53,8 +52,6 @@ function mM = BMISolution(F, G, p0, eps, seed)
         end
         
         M = M + C;
-        %M = Q(1, 1)*A11+Q(1, 2)*A12+Q(1, 3)*A13+Q(2, 2)*A22+Q(2, 3)*A23+Q(3, 3)*A33+q(1)*B1+q(2)*B2+q(3)*B3+q(4)*B4+q(5)*B5+q(6)*B6+C;
-
         minimize(c'*q + eta*(trace(Q) - 2*q0'*q)) 
 
         subject to
@@ -64,14 +61,17 @@ function mM = BMISolution(F, G, p0, eps, seed)
 
         cvx_end
 
-        fprintf('Infeasibility: %f \n', trace(Q-q*q'));     
+        fprintf('%d Infeasibility: %f \n', i, trace(Q-q*q'));
+        
+        %if trace(Q - q*q') < 0.0000000000001
+         %   break
+        %end
         q0=q;  
     end
     
     format long
     format compact
     
-    %mM=q(1)^2*A11+q(1)*q(2)*A12+q(1)*q(3)*A13+q(2)^2*A22+q(2)*q(3)*A23+q(3)^2*A33+q(1)*B1+q(2)*B2+q(3)*B3+q(4)*B4+q(5)*B5+q(6)*B6+0.5*C;
     mM = zeros(Msize);
     for j = 1:m
         for k = j:m

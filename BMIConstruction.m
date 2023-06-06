@@ -218,9 +218,9 @@ function [A, B, C, S, Peqz] = BMIConstruction(n, NumGs)
         if (dep(i) == 1)
             v = m + 2*count + 1;            % Vísir á það hvert stuðlar háðra breyta eru settir í fylkið
             str = char(Peqz(i));
-            reg = regexp(str, '(?<constant>\d*)\**P(?<first>\d*)_(?<second>\d*)', 'names');
+            L = regexp(str, '(?<constant>\d*)\**P(?<first>\d*)_(?<second>\d*)', 'names');
             Num = zeros(3,1);
-            for jj = 1:length(reg)
+            for jj = 1:length(L)
                 if isempty(L(jj).constant)
                     Num(1) = 1;
                 else
